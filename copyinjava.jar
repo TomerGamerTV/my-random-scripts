@@ -1,0 +1,58 @@
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class PasteOnKeypress {
+
+    public static void main(String[] args) {
+        // The name of the file to read
+        String fileName = "ransomware-extension-list.txt";
+
+        // Read the contents of the file into a String
+        String fileContent = readFile(fileName);
+
+        // Create a selection object with the file content
+        StringSelection selection = new StringSelection(fileContent);
+
+        // Copy the selection to the clipboard
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+
+        // Create a new Robot instance
+        Robot robot = new Robot();
+
+        // Keep looping until the user presses Ctrl+V
+        while (true) {
+            // Check if Ctrl and V keys are pressed
+            if (robot.isKeyDown(KeyEvent.VK_CONTROL) && robot.isKeyDown(KeyEvent.VK_V)) {
+                // Press the Enter key to go to the next line
+                robot.keyPress(KeyEvent.VK_ENTER);
+
+                // Release the keys
+                robot.keyRelease(KeyEvent.VK_CONTROL);
+                robot.keyRelease(KeyEvent.VK_V);
+                robot.keyRelease(KeyEvent.VK_ENTER);
+
+                // Wait for a moment to avoid pasting multiple times
+                robot.delay(500);
+            }
+        }
+    }
+
+    // Reads the contents of a file and returns it as a String
+    private static String readFile(String fileName) {
+        File file = new File(fileName);
+        StringBuilder fileContents = new StringBuilder((int)file.length());
+        try (FileReader reader = new FileReader(file)) {
+            int c;
+            while ((c = reader.read()) != -1) {
+                fileContents.append((char)c);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fileContents.toString();
+    }
+}

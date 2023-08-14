@@ -1,7 +1,9 @@
-﻿SoundPlay *-1
+﻿; Script is half broken if your keyboard layout chages for some reason you will have to change it back to english manually
+
+SoundPlay *-1
 
 ; Change the keyboard layout to English
-PostMessage, 0x50, 0, % (hkl := DllCall("LoadKeyboardLayout", "Str", "00000409", "UInt", 1)), "ahk_id " . DllCall("GetForegroundWindow")
+;PostMessage, 0x50, 0, % (hkl := DllCall("LoadKeyboardLayout", "Str", "00000409", "UInt", 1)), "ahk_id " . DllCall("GetForegroundWindow")
 
 ; Check if Caps Lock is on
 if GetKeyState("CapsLock", "T")
@@ -9,6 +11,9 @@ if GetKeyState("CapsLock", "T")
 
 ; Wait for 5 seconds (5000 milliseconds)
 Sleep, 5000
+
+; Press the Win+Space key combination
+SendInput, {LWin down}{Space down}{Space up}{LWin up}
 
 StopScript := false  ; Variable to track if the script should stop
 
@@ -18,10 +23,6 @@ programPID := 28560
 ; Read the text file
 Loop, Read, ransomware-extension-list.txt
 {
-    ; Check if the keyboard layout is English, and if not, change it back to English
-    if (DllCall("GetKeyboardLayoutNameW", "Str", klName)) && (klName != "00000409")
-        PostMessage, 0x50, 0, % (hkl := DllCall("LoadKeyboardLayout", "Str", "00000409", "UInt", 1)), "ahk_id " . DllCall("GetForegroundWindow")
-
     line := A_LoopReadLine  ; Get the current line
 
     ; Check if the program with the specified PID is frozen
@@ -34,7 +35,7 @@ Loop, Read, ransomware-extension-list.txt
 
     ; Type the line and hit enter
     SendInput %line%{Enter}
-    Sleep, 1000  ; Wait for 1 second (1000 milliseconds)
+    Sleep, 500  ; Wait for 1 second (1000 milliseconds)
 
     ; Check if one of the hotkeys to stop or close the script is pressed
     if StopScript

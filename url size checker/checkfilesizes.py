@@ -1,54 +1,115 @@
+import requests
+import time
+import pyperclip
+import os
+import json
+
+# Function to calculate the file size without downloading it
+
+
 def get_file_size(url):
     try:
-        response = requests.head(url)
-        return int(response.headers['Content-Length'])
+        response = requests.head(url, allow_redirects=True)
+        content_length = response.headers.get('content-length')
+        if content_length:
+            return int(content_length)
     except requests.exceptions.RequestException:
-        response = requests.get(url, headers={'Range': 'bytes=0-0'}, stream=True)
-        return int(response.headers['Content-Length'])
+        pass
+    return 0
 
-# Database setup
-db = sqlite3.connect('links.db')
-cursor = db.cursor()
+# Function to convert size to human-readable format
 
-cursor.execute("""CREATE TABLE IF NOT EXISTS links  
-                  (link text PRIMARY KEY, size integer)""")
 
-total_size = 0
+def format_size(size):
+    units = ['bytes', 'KB', 'MB', 'GB', 'TB']
+    i = 0
+    while size >= 1024 and i < len(units)-1:
+        size /= 1024
+        i += 1
+    return f'{size:.2f} {units[i]}'
 
-# Open links file  
-with open('links.txt') as f:
-    lines = f.readlines()
+# Function to update the links file with the processed links and their sizes
 
-# Try to open the progress file and get the last processed line
+
+def update_links_file(links, sizes):
+    with open('links.txt', 'w') as file:
+        for i, link in enumerate(links):
+            file.write(f'{link.strip()} - Size: {sizes[i]}\n')
+
+# Function to save the state of the program
+
+
+def save_state(processed_links, link_sizes, total_size):
+    state = {
+        'processed_links': processed_links,
+        'link_sizes': link_sizes,
+        'total_size': total_size
+    }
+    with open('state.json', 'w') as file:
+        json.dump(state, file)
+
+# Function to load the state of the program
+
+
+def load_state():
+    if os.path.exists('state.json'):
+        with open('state.json', 'r') as file:
+            state = json.load(file)
+            return state['processed_links'], state['link_sizes'], state['total_size']
+    return [], [], 0
+
+
+# Supported video file types
+supported_file_types = ['.mp4', '.mov', '.avi', '.webm']
+
+# Read the links from a text file and filter out non-video files
+links = []
+with open('links.txt', 'r') as file:
+    links = [link for link in file.readlines() if any(
+        file_type in link for file_type in supported_file_types)]
+
+# Variables for total size and cooldown
+cooldown = 1  # Set the cooldown time in seconds
+
+# Load the previously processed links and sizes if available
+processed_links, link_sizes, total_size = load_state()
+
+# Iterate through the links and calculate the sizes
+num_files = len(processed_links)  # Initialize the total number of video files
+for i, link in enumerate(links):
+    link = link.strip()
+    size = 0
+    if link not in processed_links:
+        num_files += 1  # Increment the total number of video files
+        size = get_file_size(link)
+        total_size += size
+        link_sizes.append(size)
+        processed_links.append(link)
+
+        # Clear previous output and print updated statistics
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f'Processing file {num_files}/{len(links)}')
+        print(f'Current file: {link} - Size: {format_size(size)}')
+        print(f'Total number of supported video files: {num_files}')
+        print(
+            f'Total size of supported video files: {format_size(total_size)}')
+
+        time.sleep(cooldown)  # Cooldown to avoid overwhelming the server
+
+        # Save the state of the program
+        save_state(processed_links, link_sizes, total_size)
+
+# Update the links and sizes files with the processed links and sizes
+update_links_file(processed_links, link_sizes)
+
+# Print final statistics
+os.system('cls' if os.name == 'nt' else 'clear')
+print(f'Processing complete!')
+print(f'Total number of supported video files: {num_files}')
+print(f'Total size of supported video files: {format_size(total_size)}')
+
 try:
-    with open('progress.txt', 'r') as f:
-        start = int(f.read().strip())
-except FileNotFoundError:
-    start = 0
-
-# Link processing loop
-for i in range(start, len(lines)):
-    link = lines[i].strip()
-    ext = link.split('.')[-1]
-
-    if ext.lower() in VIDEO_EXTENSIONS:
-        cursor.execute("SELECT * FROM links WHERE link=?", (link,))
-        if not cursor.fetchone():
-            time.sleep(1)
-            size = get_file_size(link)
-            total_size += size
-            cursor.execute("INSERT INTO links VALUES (?,?)", (link, size))
-            print(f"Processed {link} - Size: {size}")
-
-    # Write the current line number to the progress file
-    with open('progress.txt', 'w') as f:
-        f.write(str(i))
-
-# Close db after loop   
-db.commit()
-print(f"Total size: {total_size}")
-
-import pyperclip
-pyperclip.copy(f"Total size: {total_size}")
-
-db.close()
+    pyperclip.copy(str(total_size))
+    print('Total size copied to clipboard.')
+except pyperclip.PyperclipException:
+    print('Failed to copy to clipboard.')

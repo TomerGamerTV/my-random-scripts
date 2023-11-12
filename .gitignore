@@ -2,3 +2,4 @@
 .DS_Store
 url size checker/state.json
 url size checker/links.txt
+url size checker/proxies.txt

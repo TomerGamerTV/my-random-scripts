@@ -15,7 +15,7 @@ def convert_videos(input_dir, output_dir):
         output_file = os.path.join(output_dir, os.path.splitext(video_file)[0] + '.mp4')
 
         # Construct the FFmpeg command
-        ffmpeg_command = f'ffmpeg -i {os.path.join(input_dir, video_file)} -c:v libx265 -crf 28 {output_file}'
+        ffmpeg_command = f'ffmpeg -i {os.path.join(input_dir, video_file)} -c:v hevc_nvenc -q:v 0 {output_file}'
 
         # Execute the FFmpeg command
         subprocess.call(ffmpeg_command, shell=True)

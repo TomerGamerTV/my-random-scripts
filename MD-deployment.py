@@ -56,6 +56,9 @@ def main():
     print("Tool created by TomerGamerTV, Do not steal.")
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
+        print("Tool created by TomerGamerTV, Do not steal.")
+        print(
+            f"Current time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("\nOptions:")
         for option in roleplayer.options:
             print(

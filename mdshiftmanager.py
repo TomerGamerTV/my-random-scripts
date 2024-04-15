@@ -1,6 +1,7 @@
 import datetime
 import os
 import time
+import json
 
 
 class Roleplayer:
@@ -9,14 +10,26 @@ class Roleplayer:
             1: {"name": "Users Morph", "points": 0},
             2: {"name": "Remorphed", "points": 0},
             3: {"name": "Unmorphed", "points": 0},
-            4: {"name": "Startergear", "points": 0}
+            4: {"name": "Startergear", "points": 0},
+            5: {"name": "Canrks", "points": 0}
         }
         self.error_message = ""
+        self.temp_file = "temp_morphlog.txt"
+
+    def load_temp_file(self):
+        if os.path.exists(self.temp_file):
+            with open(self.temp_file, "r") as file:
+                self.options = json.load(file)
+
+    def save_temp_file(self):
+        with open(self.temp_file, "w") as file:
+            json.dump(self.options, file)
 
     def select_option(self, option):
         if option in self.options:
             self.options[option]["points"] += 1
             self.error_message = ""
+            self.save_temp_file()
         else:
             self.error_message = "Invalid option. Please enter a valid option."
 
@@ -25,12 +38,13 @@ class Roleplayer:
             if self.options[option]["points"] >= points and points > 0:
                 self.options[option]["points"] -= points
                 self.error_message = ""
+                self.save_temp_file()
             else:
                 self.error_message = "Invalid number of points. Please enter a number greater than 0 and less than or equal to the current points."
         else:
             self.error_message = "Invalid option. Please enter a valid option."
 
-    def finish_deployment(self):
+    def finish_deployment(self, start_time):
         print("Are you sure you want to finish your shift? Press 'Y' to confirm or 'N' to return back.")
         confirm = input().lower()
         if confirm == 'y':
@@ -40,11 +54,15 @@ class Roleplayer:
             for option in self.options:
                 print(
                     f"{self.options[option]['name']}: {self.options[option]['points']} points")
+            elapsed_time = time.time() - start_time
             with open(f"morphlog_{datetime.datetime.now().strftime('%Y%m%d')}.txt", "w") as file:
                 file.write(f"Total points: {total_points}\n")
                 for option in self.options:
                     file.write(
                         f"{self.options[option]['name']}: {self.options[option]['points']} points\n")
+                file.write(
+                    f"Time elapsed: {time.strftime('%H:%M:%S', time.gmtime(elapsed_time))}\n")
+            os.remove(self.temp_file)
             return True
         elif confirm == 'n':
             return False
@@ -53,6 +71,7 @@ class Roleplayer:
 def main():
     start_time = time.time()
     roleplayer = Roleplayer()
+    roleplayer.load_temp_file()
     print("Tool created by TomerGamerTV, Do not steal.")
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -68,7 +87,7 @@ def main():
         user_input = input(
             "Select an option or type 'F' to finish deployment or 'R' to remove points or 'ESC' to exit the program: ")
         if user_input.lower() == 'f':
-            if roleplayer.finish_deployment():
+            if roleplayer.finish_deployment(start_time):
                 elapsed_time = time.time() - start_time
                 print(
                     f"Time elapsed: {time.strftime('%H:%M:%S', time.gmtime(elapsed_time))}")

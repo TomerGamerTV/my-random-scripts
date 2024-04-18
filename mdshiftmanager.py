@@ -2,19 +2,21 @@ import datetime
 import os
 import time
 import json
+import threading
 
 
 class Roleplayer:
     def __init__(self):
         self.options = {
-            1: {"name": "Users Morph", "points": 0},
+            1: {"name": "Users Morphed", "points": 0},
             2: {"name": "Remorphed", "points": 0},
             3: {"name": "Unmorphed", "points": 0},
-            4: {"name": "Startergear", "points": 0},
-            5: {"name": "Canrks", "points": 0}
+            4: {"name": "Startergear", "points": 0}
         }
         self.error_message = ""
         self.temp_file = "temp_morphlog.txt"
+        self.version = "1.0.1"
+        self.last_checked = datetime.datetime.now()
 
     def load_temp_file(self):
         if os.path.exists(self.temp_file):
@@ -85,7 +87,7 @@ def main():
         if roleplayer.error_message:
             print(f"Latest Error: {roleplayer.error_message}")
         user_input = input(
-            "Select an option or type 'F' to finish deployment or 'R' to remove points or 'ESC' to exit the program: ")
+            "Select an option or type 'F' to finish deployment or 'R' to remove points or 'K' to exit the program: ")
         if user_input.lower() == 'f':
             if roleplayer.finish_deployment(start_time):
                 elapsed_time = time.time() - start_time
@@ -100,9 +102,14 @@ def main():
                 roleplayer.remove_points(option, points)
             except ValueError:
                 roleplayer.error_message = "Invalid input. Please enter a valid option."
-        elif user_input.lower() == 'esc':
+        elif user_input.lower() == 'k':
             print("Exiting the program...")
             break
+        elif user_input.lower() == 'i':
+            print(f"Version: {roleplayer.version}")
+            print(
+                f"Last checked for updates: {roleplayer.last_checked.strftime('%Y-%m-%d %H:%M:%S')}")
+            time.sleep(10)
         else:
             try:
                 roleplayer.select_option(int(user_input))

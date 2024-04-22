@@ -1,0 +1,2 @@
+python mdshiftmanager.py
+pause

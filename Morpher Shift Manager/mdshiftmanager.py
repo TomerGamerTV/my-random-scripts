@@ -11,11 +11,12 @@ class Roleplayer:
             1: {"name": "Users Morphed", "points": 0},
             2: {"name": "Remorphed", "points": 0},
             3: {"name": "Unmorphed", "points": 0},
-            4: {"name": "Startergear", "points": 0}
+            4: {"name": "Startergear", "points": 0},
+            5: {"name": "Tech Support Given", "points": 0}  # New category
         }
         self.error_message = ""
         self.temp_file = "temp_morphlog.txt"
-        self.version = "1.0.1"
+        self.version = "1.0.2"  # Updated version
         self.last_checked = datetime.datetime.now()
 
     def load_temp_file(self):
@@ -107,8 +108,6 @@ def main():
             break
         elif user_input.lower() == 'i':
             print(f"Version: {roleplayer.version}")
-            print(
-                f"Last checked for updates: {roleplayer.last_checked.strftime('%Y-%m-%d %H:%M:%S')}")
             time.sleep(10)
         else:
             try:

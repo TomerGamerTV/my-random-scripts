@@ -4,5 +4,8 @@ url size checker/state.json
 url size checker/links.txt
 url size checker/proxies.txt
 convertogif.py
-*morphlog_
+*morphlog_*
 morphlog_20240413.txt
+Roblox Group Finder/node_modules
+Roblox Group Finder/proxies.txt
+Discord Message Inserter/webhook.py

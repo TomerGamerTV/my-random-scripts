@@ -16,13 +16,16 @@ class Roleplayer:
         }
         self.error_message = ""
         self.temp_file = "temp_morphlog.txt"
-        self.version = "1.0.2"  # Updated version
+        self.version = "1.0.3"  # Updated version
         self.last_checked = datetime.datetime.now()
+        self.load_temp_file()
 
     def load_temp_file(self):
         if os.path.exists(self.temp_file):
             with open(self.temp_file, "r") as file:
                 self.options = json.load(file)
+            # Convert keys back to integers
+            self.options = {int(k): v for k, v in self.options.items()}
 
     def save_temp_file(self):
         with open(self.temp_file, "w") as file:
@@ -58,7 +61,12 @@ class Roleplayer:
                 print(
                     f"{self.options[option]['name']}: {self.options[option]['points']} points")
             elapsed_time = time.time() - start_time
-            with open(f"morphlog_{datetime.datetime.now().strftime('%Y%m%d')}.txt", "w") as file:
+
+            # Create the "logs" directory if it doesn't exist
+            if not os.path.exists("logs"):
+                os.makedirs("logs")
+
+            with open(f"logs/morphlog_{datetime.datetime.now().strftime('%Y%m%d')}.txt", "w") as file:
                 file.write(f"Total points: {total_points}\n")
                 for option in self.options:
                     file.write(
@@ -68,13 +76,16 @@ class Roleplayer:
             os.remove(self.temp_file)
             return True
         elif confirm == 'n':
+            self.error_message = ""  # Reset the error message
+            return False
+        else:
+            self.error_message = "Invalid input. Please enter a valid option."
             return False
 
 
 def main():
     start_time = time.time()
     roleplayer = Roleplayer()
-    roleplayer.load_temp_file()
     print("Tool created by TomerGamerTV, Do not steal.")
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')

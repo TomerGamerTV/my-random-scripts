@@ -1,0 +1,11 @@
+examples:
+  - How much is $first_operand{2} $operator{times} $second_operand{3}
+  - Can you calculate $first_operand{two} $operator{-} $second_operand{1}?
+  - Tell me the result of $first_operand{6} $operator{divided by} $second_operand{three}
+
+# This intent uses a webhook to produce an answer: if User sees these responses,
+# it means that something went wrong in the webhook call
+responses:
+  default:
+    - text:
+      - Sorry, there seems to be service error. Your request can't be completed

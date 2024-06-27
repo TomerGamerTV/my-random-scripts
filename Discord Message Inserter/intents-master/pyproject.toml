@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "intents"
+version = "0.3.0"
+description = "Define and operate Dialogflow Agents with a simple, code-first, approach"
+authors = ["Dario <dario.chi@inventati.org>"]
+license = "Apache-2.0"
+readme = 'README.md'
+repository = "https://github.com/dariowho/intents"
+documentation = "https://intents.readthedocs.io/"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyyaml = "^6.0.1"
+google-cloud-dialogflow = "^2.0.0"
+dacite = "^1.6.0"
+snips-nlu = {version = "^0.20.2", optional = true, extras = ["snips"]}
+
+[tool.poetry.extras]
+snips = ["snips-nlu"]
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.6.0"
+ipython = "^7.19.0"
+notebook = "^6.2.0"
+ipykernel = "^5.4.3"
+sphinx = "^3.5.1"
+recommonmark = "^0.7.1"
+sphinx-rtd-theme = "^0.5.1"
+autopep8 = "^1.5.6"
+m2r2 = "^0.2.7"
+sphinx-markdown-tables = "^0.0.15"
+pytest = "^6.2.4"
+pytest-cov = "^2.12.0"
+sphinx-autodoc-typehints = "^1.12.0"
+rope = "^0.19.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -1,0 +1,18 @@
+examples:
+  - Consigliami un hotel
+  - Consigliami un albergo
+  - Raccomandami un albergo
+  - Conosci qualche buon hotel?
+  - C'e' qualche hotel che consiglieresti?
+  - Hai un albergo da consigliare?
+
+responses:
+  default:
+    - text:
+      - Che ne dici dell'Hotel Belvedere a Como?
+  rich:
+    - card:
+        title: Hotel Belvedere
+        subtitle: 📍 Como, IT 💬 (42) 👍 ★★★★☆
+        image: https://loremflickr.com/320/240/holiday
+        link: https://github.com/dariowho/intents

@@ -1,7 +1,7 @@
 # 🛠️ [Your Repo Name] Script Collection
 
 ![GitHub](https://img.shields.io/github/stars/TomerGamerTV/my-random-scripts)
-![GitHub last commit](https://img.shields.io/gitea/last-commit/TomerGamerTV/my-random-scripts)
+![GitHub last commit](https://img.shields.io/github/last-commit/TomerGamerTV/my-random-scripts)
 
 ## 📖 Purpose
 
